@@ -37,13 +37,13 @@ class AtlanticCitySpider(CityScrapersSpider):
     - `meeting_detail_url`: retrieves detailed information for each
     meeting using its ID.
 
-    Additionally, a third url `calender_source` is used as the source
+    Additionally, a third url `calendar_source` is used as the source
     field of the meeting since it is more user friendly to navigate
     than the api endpoints.
     """
     meetings_url = "https://www.acnj.gov/api/data/GetCalendarMeetings?end=06%2F30%2F2025+12:00+am&meetingTypeID=all&start=06%2F01%2F2024+12:00+am"  # noqa
     meeting_detail_url = "https://www.acnj.gov/api/data/GetMeeting?id="
-    calender_source = "https://www.acnj.gov/calendar"
+    calendar_source = "https://www.acnj.gov/calendar"
 
     def start_requests(self):
         yield scrapy.Request(url=self.meetings_url, method="GET", callback=self.parse)
@@ -74,7 +74,7 @@ class AtlanticCitySpider(CityScrapersSpider):
             time_notes="",
             location=self._parse_location(meeting_detail),
             links=self._parse_links(meeting_detail),
-            source=self.calender_source,
+            source=self.calendar_source,
         )
 
         meeting["status"] = self._get_status(meeting_detail)
@@ -86,8 +86,8 @@ class AtlanticCitySpider(CityScrapersSpider):
         for classification in CLASSIFICATIONS:
             if classification.lower() in item["Meeting_Type"].lower():
                 return classification
-            elif "council" in item["Meeting_Type"].lower():
-                return CITY_COUNCIL
+        if "council" in item["Meeting_Type"].lower():
+            return CITY_COUNCIL
         return NOT_CLASSIFIED
 
     def _parse_location(self, item):
