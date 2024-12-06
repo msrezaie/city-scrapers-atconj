@@ -16,7 +16,7 @@ from city_scrapers_core.spiders import CityScrapersSpider
 from dateutil.parser import parse
 
 
-class AlanticCitySpider(CityScrapersSpider):
+class AtlanticCitySpider(CityScrapersSpider):
     name = "atconj_Atlantic_City"
     agency = "Atlantic City"
     timezone = "America/New_York"

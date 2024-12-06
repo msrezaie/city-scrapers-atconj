@@ -6,7 +6,7 @@ from city_scrapers_core.constants import NOT_CLASSIFIED
 from city_scrapers_core.utils import file_response
 from freezegun import freeze_time
 
-from city_scrapers.spiders.atconj_Atlantic_City import AlanticCitySpider
+from city_scrapers.spiders.atconj_Atlantic_City import AtlanticCitySpider
 
 test_response = file_response(
     join(dirname(__file__), "files", "atconj_Atlantic_City.json"),
@@ -18,7 +18,7 @@ meeting_detail_response = file_response(
     url="https://www.acnj.gov/api/data/GetMeeting?id=429",
 )
 
-spider = AlanticCitySpider()
+spider = AtlanticCitySpider()
 
 freezer = freeze_time("2024-12-06")
 freezer.start()
