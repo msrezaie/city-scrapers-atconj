@@ -14,6 +14,8 @@ from city_scrapers_core.constants import (
 from city_scrapers_core.items import Meeting
 from city_scrapers_core.spiders import CityScrapersSpider
 from dateutil.parser import parse
+from dateutil.relativedelta import relativedelta
+from pytz import timezone
 
 
 class AtlanticCitySpider(CityScrapersSpider):
@@ -41,15 +43,32 @@ class AtlanticCitySpider(CityScrapersSpider):
     field of the meeting since it is more user friendly to navigate
     than the api endpoints.
     """
-    meetings_url = "https://www.acnj.gov/api/data/GetCalendarMeetings?end=06%2F30%2F2025+12:00+am&meetingTypeID=all&start=06%2F01%2F2024+12:00+am"  # noqa
+    meetings_url = "https://www.acnj.gov/api/data/GetCalendarMeetings?end={endDT}&meetingTypeID=all&start={startDT}"  # noqa
     meeting_detail_url = "https://www.acnj.gov/api/data/GetMeeting?id="
     calendar_source = "https://www.acnj.gov/calendar"
 
     def start_requests(self):
-        yield scrapy.Request(url=self.meetings_url, method="GET", callback=self.parse)
+        """
+        The date parameters for the API endpoint are open ended. So to
+        include a good chunk of past and future meetings, start and end
+        dates are calculated based on the current date and a few months
+        in the past and future.
+
+        The end date is set to 3 months in the future and the start date
+        is set to 8 months in the past (arbitrarily chosen).
+        """
+        now = datetime.now()
+
+        start_dt = now - relativedelta(months=8)
+        end_dt = now + relativedelta(months=3)
+
+        start_date = start_dt.strftime("%m%%2F%d%%2F%Y+12:00+am")
+        end_date = end_dt.strftime("%m%%2F%d%%2F%Y+12:00+am")
+        url = self.meetings_url.format(startDT=start_date, endDT=end_date)
+        yield scrapy.Request(url=url, method="GET", callback=self.parse)
 
     def parse(self, response):
-        data = json.loads(response.text)
+        data = response.json()
         for item in data:
             meeting_id = item["id"]
             meeting_detail_url = self.meeting_detail_url + meeting_id
@@ -113,15 +132,16 @@ class AtlanticCitySpider(CityScrapersSpider):
         titles = ["Agenda", "Minutes", "Notice"]
 
         links = [
-            {"title": title, "href": urljoin(base_url, item.get(key, ""))}
+            {"title": title, "href": urljoin(base_url, item.get(key))}
             for title, key in zip(titles, keys)
             if item.get(key)
         ]
         return links
 
     def _get_status(self, item):
+        eastern = timezone(self.timezone)
         if item["Meeting_IsCanceled"]:
             return CANCELLED
-        if parse(item["Meeting_DateTime"]) < datetime.now():
+        if parse(item["Meeting_DateTime"]).astimezone(eastern) < datetime.now(eastern):
             return PASSED
         return TENTATIVE
