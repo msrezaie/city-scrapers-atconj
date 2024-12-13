@@ -80,21 +80,21 @@ class AtconjCountyCommissionSpider(CityScrapersSpider):
         return dateparse(item["endDate"]).astimezone(tz=None).replace(tzinfo=None)
 
     def _parse_location(self, item):
-        location = item["location"]
-        if not location["address"] or not location["name"]:
+        location = item.get("location")
+        if not location.get("address") or not location.get("name"):
             return self.default_location
-        return {"name": location["name"], "address": location["address"]}
+        return {"name": location.get("name"), "address": location.get("address")}
 
     def _parse_links(self, item):
         links = []
 
         item = Selector(text=item)
-        agenda = item.css("td.event_agenda a").get()
-        minutes = item.css("td.event_minutes a").get()
-        if agenda:
-            agenda = agenda.split('href="')[1].split('"')[0]
-            links.append({"href": self.original_url + agenda, "title": "Agenda"})
-        if minutes:
-            minutes = minutes.split('href="')[1].split('"')[0]
-            links.append({"href": self.original_url + minutes, "title": "Minutes"})
+        agenda_url = item.css("td.event_agenda a").get()
+        minutes_url = item.css("td.event_minutes a").get()
+        if agenda_url:
+            agenda_url = agenda_url.split('href="')[1].split('"')[0]
+            links.append({"href": self.original_url + agenda_url, "title": "Agenda"})
+        if minutes_url:
+            minutes_url = minutes_url.split('href="')[1].split('"')[0]
+            links.append({"href": self.original_url + minutes_url, "title": "Minutes"})
         return links
