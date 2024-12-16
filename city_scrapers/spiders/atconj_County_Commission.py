@@ -84,6 +84,7 @@ class AtconjCountyCommissionSpider(CityScrapersSpider):
         except ValueError as e:
             self.logger.error(f"Failed to parse date '{start_dt}': {e}")
             return None
+
     def _parse_location(self, item):
         location = item.get("location")
         if not location.get("address") or not location.get("name"):
