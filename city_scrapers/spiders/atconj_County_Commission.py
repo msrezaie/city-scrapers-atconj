@@ -79,10 +79,11 @@ class AtconjCountyCommissionSpider(CityScrapersSpider):
     def _parse_start(self, item):
         item = Selector(text=item)
         start_dt = item.css("time::text").get().strip()
-        start_dt = dateparse(start_dt)
-
-        return start_dt
-
+        try:
+            return dateparse(start_dt)
+        except ValueError as e:
+            self.logger.error(f"Failed to parse date '{start_dt}': {e}")
+            return None
     def _parse_location(self, item):
         location = item.get("location")
         if not location.get("address") or not location.get("name"):
