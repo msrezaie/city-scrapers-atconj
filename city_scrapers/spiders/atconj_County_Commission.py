@@ -28,7 +28,8 @@ class AtconjCountyCommissionSpider(CityScrapersSpider):
     """
     This website would return a 403 error if the request
     is made with the default headers. The headers below
-    are the ones that are needed to make the request.
+    are the ones that are needed to make the request return
+    a successful response.
     """
 
     def start_requests(self):
@@ -51,14 +52,18 @@ class AtconjCountyCommissionSpider(CityScrapersSpider):
         time_note = response.css("div#widget_45_2122_758 p::text").get()
 
         for row_item, script_item in zip(rows, scripts):
-            content = json.loads(script_item)
+            try:
+                content = json.loads(script_item)
+            except json.JSONDecodeError as e:
+                self.logger.error(f"Failed to parse JSON: {e}")
+                continue
 
             meeting = Meeting(
                 title="Atlantic County Board of County Commissioners",
                 description="",
                 classification=BOARD,
-                start=self._parse_start(content),
-                end=self._parse_end(content),
+                start=self._parse_start(row_item),
+                end=None,
                 all_day=False,
                 time_notes=time_note.strip(),
                 location=self._parse_location(content),
@@ -72,12 +77,11 @@ class AtconjCountyCommissionSpider(CityScrapersSpider):
             yield meeting
 
     def _parse_start(self, item):
-        """Parse start datetime as a naive datetime object."""
-        return dateparse(item["startDate"]).astimezone(tz=None).replace(tzinfo=None)
+        item = Selector(text=item)
+        start_dt = item.css("time::text").get().strip()
+        start_dt = dateparse(start_dt)
 
-    def _parse_end(self, item):
-        """Parse end datetime as a naive datetime object."""
-        return dateparse(item["endDate"]).astimezone(tz=None).replace(tzinfo=None)
+        return start_dt
 
     def _parse_location(self, item):
         location = item.get("location")
