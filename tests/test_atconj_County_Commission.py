@@ -23,59 +23,68 @@ freezer.stop()
 
 
 def test_title():
-    assert parsed_items[0]["title"] == "Atlantic County Board of County Commissioners"
+    assert parsed_items[3]["title"] == "Atlantic County Board of County Commissioners"
 
 
 def test_description():
-    assert parsed_items[0]["description"] == ""
+    assert parsed_items[3]["description"] == ""
 
 
 def test_start():
-    assert parsed_items[0]["start"] == datetime(2025, 1, 7, 16, 0)
+    assert parsed_items[3]["start"] == datetime(2024, 11, 19, 16, 0)
 
 
 def test_end():
-    assert parsed_items[0]["end"] is None
+    assert parsed_items[3]["end"] is None
 
 
 def test_time_notes():
     assert (
-        parsed_items[0]["time_notes"]
+        parsed_items[3]["time_notes"]
         == "All Commissioner meetings held on First and Third Tuesdays at 4:00 pm unless otherwise noted."  # noqa
     )
 
 
 def test_id():
     assert (
-        parsed_items[0]["id"]
-        == "atconj_County_Commission/202501071600/x/atlantic_county_board_of_county_commissioners"  # noqa
+        parsed_items[3]["id"]
+        == "atconj_County_Commission/202411191600/x/atlantic_county_board_of_county_commissioners"  # noqa
     )
 
 
 def test_status():
-    assert parsed_items[0]["status"] == "tentative"
+    assert parsed_items[3]["status"] == "passed"
 
 
 def test_location():
-    assert parsed_items[0]["location"] == {
-        "name": "Atlantic County Institute of Technology",
-        "address": "Atlantic County Institute of Technology, 5080 Atlantic Avenue Mays Landing, New Jersey 08330",  # noqa
+    assert parsed_items[3]["location"] == {
+        "name": "Stillwater Building",
+        "address": "Stillwater Building, 201 S. Shore Road Northfield, New Jersey 08225",  # noqa
     }
 
 
 def test_source():
     assert (
-        parsed_items[0]["source"]
+        parsed_items[3]["source"]
         == "https://www.atlanticcountynj.gov/government/county-government/board-of-county-commissioners/meeting-schedule-agendas-and-minutes/-toggle-all"  # noqa
     )
 
 
 def test_links():
-    assert parsed_items[0]["links"] == []
+    assert parsed_items[3]["links"] == [
+        {
+            "href": "https://www.atlanticcountynj.gov/home/showpublisheddocument/22173/638672779908270000",  # noqa
+            "title": "Agenda",
+        },
+        {
+            "href": "https://www.atlanticcountynj.gov/home/showpublisheddocument/22235/638690116199730000",  # noqa
+            "title": "Minutes",
+        },
+    ]
 
 
 def test_classification():
-    assert parsed_items[0]["classification"] == BOARD
+    assert parsed_items[3]["classification"] == BOARD
 
 
 @pytest.mark.parametrize("item", parsed_items)
