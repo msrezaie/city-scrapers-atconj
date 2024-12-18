@@ -1,4 +1,3 @@
-import json
 from datetime import datetime
 from urllib.parse import urljoin
 
@@ -81,7 +80,7 @@ class AtlanticCitySpider(CityScrapersSpider):
             )
 
     def parse_meeting(self, response, item):
-        meeting_detail = json.loads(response.text)
+        meeting_detail = response.json()
 
         meeting = Meeting(
             title=item["title"],
