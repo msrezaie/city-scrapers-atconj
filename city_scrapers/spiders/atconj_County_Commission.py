@@ -22,7 +22,7 @@ class AtconjCountyCommissionSpider(CityScrapersSpider):
 
     default_location = {
         "name": "Stillwater Building",
-        "address": "Stillwater Building, 201 S. Shore Road Northfield, New Jersey 08225",  # noqa
+        "address": "201 S. Shore Road Northfield, New Jersey 08225",  # noqa
     }
 
     """
@@ -89,7 +89,12 @@ class AtconjCountyCommissionSpider(CityScrapersSpider):
         location = item.get("location")
         if not location.get("address") or not location.get("name"):
             return self.default_location
-        return {"name": location.get("name"), "address": location.get("address")}
+        name = location.get("name")
+        address = location.get("address").split(", ")
+        address.remove(name)
+        address = ", ".join(address)
+
+        return {"name": name, "address": address}
 
     def _parse_links(self, item):
         links = []

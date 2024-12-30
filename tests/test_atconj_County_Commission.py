@@ -59,7 +59,7 @@ def test_status():
 def test_location():
     assert parsed_items[3]["location"] == {
         "name": "Stillwater Building",
-        "address": "Stillwater Building, 201 S. Shore Road Northfield, New Jersey 08225",  # noqa
+        "address": "201 S. Shore Road Northfield, New Jersey 08225",
     }
 
 
