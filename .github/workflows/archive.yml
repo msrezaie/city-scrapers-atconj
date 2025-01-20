@@ -28,15 +28,6 @@ jobs:
       - name: Install Pipenv
         run: pip install --user pipenv
 
-      - name: Cache Python dependencies
-        uses: actions/cache@v4
-        with:
-          path: .venv
-          key: ${{ env.PYTHON_VERSION }}-${{ hashFiles('**/Pipfile.lock') }}
-          restore-keys: |
-            ${{ env.PYTHON_VERSION }}-
-            pip-
-
       - name: Install dependencies
         run: pipenv sync
         env:
