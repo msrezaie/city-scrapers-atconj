@@ -96,7 +96,7 @@ class AtlanticCitySpider(CityScrapersSpider):
         )
 
         meeting["status"] = self._get_status(meeting_detail)
-        meeting["id"] = int(item["id"])
+        meeting["id"] = self._get_id(meeting)
 
         yield meeting
 
