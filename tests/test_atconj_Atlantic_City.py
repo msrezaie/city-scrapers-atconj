@@ -63,7 +63,9 @@ def test_all_day():
 
 
 def test_id():
-    assert parsed_items[0]["id"] == 429
+    assert (
+        parsed_items[0]["id"] == "atconj_Atlantic_City/202406261700/x/citistat_meeting"
+    )
 
 
 def test_status():
